@@ -1,6 +1,6 @@
 #include <3ds.h>
 #include "gfx.h"
-touchPosition tp;
+#include "block.cs"
 
 int main()
 {
@@ -18,7 +18,9 @@ int main()
 		hidScanInput();
 		u32 kDown = hidKeysDown();
 
-		//Add game code here!
+		for (int i=0;i < 15;i++){
+			block block[i] = new block();
+		}
 		
 		// Flush and swap framebuffers
 		gfxFlushBuffers();
