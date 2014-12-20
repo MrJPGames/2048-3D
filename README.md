@@ -9,7 +9,7 @@ Currently the project in not yet on github, this will be added sometime soon.
 
 Plans:<br>
 Text version (Skiped)<br>
-Add basic GFX (Dpne)<br>
+Add basic GFX (Done)<br>
 Animations (Not done)<br>
 Add better GFX (Not done)<br>
 Polish! (Not done)<br>
