@@ -1,9 +1,9 @@
 #include <3ds.h>
 #include "Block.h"
 #include "blocks_bin.h"
+#include "bg_bin.h"
 
 Block block[16];
-
 void gfxDrawSprite(gfxScreen_t screen, gfx3dSide_t side, u8* spriteData, u16 width, u16 height, s16 x, s16 y)
 {
 	if(!spriteData)return;
@@ -30,10 +30,62 @@ void gfxDrawSprite(gfxScreen_t screen, gfx3dSide_t side, u8* spriteData, u16 wid
 		memcpy(&fbAdr[((x+xOffset)+(y+j)*fbWidth)*3], &spriteData[((xOffset)+(j)*width)*3], widthDrawn*3);
 	}
 }
+void gfxDrawSpriteBlend(gfxScreen_t screen, gfx3dSide_t side, u8* spriteData, u16 width, u16 height, s16 x, s16 y, int alpha)
+{
+	if(!spriteData)return;
+
+	u16 fbWidth, fbHeight;
+	u8* fbAdr=gfxGetFramebuffer(screen, side, &fbWidth, &fbHeight);
+
+	if(x+width<0 || x>=fbWidth)return;
+	if(y+height<0 || y>=fbHeight)return;
+
+	u16 xOffset=0, yOffset=0;
+	u16 widthDrawn=width, heightDrawn=height;
+
+	if(x<0)xOffset=-x;
+	if(y<0)yOffset=-y;
+	if(x+width>=fbWidth)widthDrawn=fbWidth-x;
+	if(y+height>=fbHeight)heightDrawn=fbHeight-y;
+	widthDrawn-=xOffset;
+	heightDrawn-=yOffset;
+
+	//TODO : optimize
+	fbAdr+=(y+yOffset)*fbWidth*3;
+	spriteData+=yOffset*width*3;
+	int j, i;
+	for(j=yOffset; j<yOffset+heightDrawn; j++)
+	{
+		u8* fbd=&fbAdr[(x+xOffset)*3];
+		u8* data=&spriteData[(xOffset)*3];
+		for(i=xOffset; i<xOffset+widthDrawn; i++)
+		{
+			fbd[0] = ((data[0] * alpha)+(fbd[0] * (255 - alpha))) / 256;
+			fbd[1] = ((data[1] * alpha)+(fbd[1] * (255 - alpha))) / 256;
+			fbd[2] = ((data[2] * alpha)+(fbd[2] * (255 - alpha))) / 256;
+			fbd+=3;
+			data+=3;
+		}
+		fbAdr+=fbWidth*3;
+		spriteData+=width*3;
+	}
+}
 void render(){
+	gfxDrawSprite(GFX_TOP, GFX_LEFT, (u8*)bg_bin, 240, 400, 0, 0);
 	for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 4; j++){
-			gfxDrawSprite(GFX_TOP, GFX_LEFT, (u8*)blocks_bin+7203*block[i*4+j].getVal(), 49, 49, i*-52+180, j*52+20); 
+			if (block[i*4+j].getTransparancy() < 255){
+				gfxDrawSpriteBlend(GFX_TOP, GFX_LEFT, (u8*)blocks_bin+7203*block[i*4+j].getVal(), 49, 49, i*-52+175, j*52+96, block[i*4+j].getTransparancy());
+			}else{
+				gfxDrawSprite(GFX_TOP, GFX_LEFT, (u8*)blocks_bin+7203*block[i*4+j].getVal(), 49, 49, i*-52+175, j*52+96); 
+			}
+		}
+	}
+}
+void updateTiles(){
+	for (int i=0;i<16;i++){
+		if (block[i].getTransparancy() < 255){
+			block[i].setTransparancy(block[i].getTransparancy()+5);
 		}
 	}
 }
@@ -46,10 +98,10 @@ void addRandomTiles(int amount){
 			if (block[randpos].getVal() == 0){
 				switch(rand() %10){
 					case 0:
-						block[randpos].editBlock(2,false);
+						block[randpos].editBlock(2,false, 0);
 						break;
 					default:
-						block[randpos].editBlock(1,false);
+						block[randpos].editBlock(1,false, 0);
 						break;
 				}
 				done=true;
@@ -60,10 +112,10 @@ void addRandomTiles(int amount){
 					if (block[i].getVal() == 0){
 						switch(rand() %10){
 							case 0:
-								block[i].editBlock(2,false);
+								block[i].editBlock(2,false, 0);
 								break;
 							default:
-								block[i].editBlock(1,false);
+								block[i].editBlock(1,false, 0);
 								break;
 						}
 						i=16;
@@ -77,6 +129,7 @@ void addRandomTiles(int amount){
 void endMove(bool moved){
 	for (int i = 0; i<=15;i++){
 		block[i].editBlock(block[i].getVal(), false);
+		block[i].setTransparancy(255);
 	}
 	if (moved)
 		addRandomTiles(1);
@@ -197,6 +250,7 @@ int main()
 	resetGame();
 	while (aptMainLoop())
 	{
+		updateTiles();
 		hidScanInput();
 		u32 kDown = hidKeysDown();
 		if (kDown & KEY_START)
