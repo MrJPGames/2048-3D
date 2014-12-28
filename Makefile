@@ -31,9 +31,9 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-APP_TITLE	:=	TPS
-APP_DESCRIPTION	:=	Press A realy fast!
-APP_AUTHOR	:=	Jasper Peters
+APP_TITLE	:=	2048 3D
+APP_DESCRIPTION	:=	A "Port" of the popular 2048 game!!!
+APP_AUTHOR	:=	Jasper Peters (MrJPGames)
 
 #---------------------------------------------------------------------------------
 # options for code generation
