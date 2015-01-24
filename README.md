@@ -14,4 +14,4 @@ Animations (Not done)<br>
 Add better GFX (Not done)<br>
 Polish! (Not done)<br>
 
-* Only tested with NINJHAX, not tested with gateway or in menu with .CIA.
+* All executables except .elf are tested and working!
