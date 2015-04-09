@@ -14,4 +14,4 @@ Animations (Not done)<br>
 Add better GFX (Not done)<br>
 Polish! (Not done)<br>
 
-* All executables except .elf are tested and working!
+* All executables except .elf are tested and working! .elf should work as the .cia is made from the .elf but as there is no way to launch .elf files on 3DS right now it cannot be tested on the actual hardware though it does work on emulators like citra.
