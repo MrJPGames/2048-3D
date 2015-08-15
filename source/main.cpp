@@ -92,6 +92,8 @@ void updateTiles(){
 	}
 }
 void addRandomTiles(int amount){
+	u64 timeInSeconds = osGetTime() / 1000; //Get time
+	srand (timeInSeconds); //Seed the random number generator with the current time to make it seem random
 	for (int i = 0; i<amount;i++){
 		bool done=false;
 		int tries=0;
