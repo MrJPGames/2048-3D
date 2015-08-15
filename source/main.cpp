@@ -1,4 +1,6 @@
 #include <3ds.h>
+#include <cstring>
+#include <cstdlib>
 #include "Block.h"
 #include "blocks_bin.h"
 #include "bg_bin.h"
@@ -245,7 +247,7 @@ int main()
 	srvInit();
 	aptInit();
 	hidInit(NULL);
-	gfxInit();
+	gfxInitDefault();
 	//gfxSet3D(true);
 	resetGame();
 	while (aptMainLoop())
