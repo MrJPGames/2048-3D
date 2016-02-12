@@ -248,7 +248,7 @@ int main()
 	// Initialize services
 	srvInit();
 	aptInit();
-	hidInit(NULL);
+	hidInit();
 	gfxInitDefault();
 	//gfxSet3D(true);
 	resetGame();
@@ -274,7 +274,7 @@ int main()
 		gfxFlushBuffers();
 		gfxSwapBuffers();
 
-		gspWaitForEvent(GSPEVENT_VBlank0, false);
+		gspWaitForEvent(GSPGPU_EVENT_VBlank0, false);
 	}
 
 	// Exit services
